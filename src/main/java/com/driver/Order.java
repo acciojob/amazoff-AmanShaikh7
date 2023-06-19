@@ -6,6 +6,11 @@ public class Order {
     private int deliveryTime;
 
     public Order(String id, String deliveryTime) {
+        String[] divide = deliveryTime.split(":");
+        int hours = Integer.parseInt(divide[0]);
+        int minutes = Integer.parseInt(divide[1]);
+        this.deliveryTime = hours*60 + minutes; // delivery time in minutes
+        this.id =id;
 
         // The deliveryTime has to converted from string to int and then stored in the attribute
         //deliveryTime  = HH*60 + MM
