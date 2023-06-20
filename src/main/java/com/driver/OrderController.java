@@ -1,5 +1,6 @@
 package com.driver;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("orders")
+
 public class OrderController {
     @Autowired
     OrderService orderService;
 
+    //List<String> assignedOrderstopartner = new ArrayList<>();
     @PostMapping("/add-order")
     public ResponseEntity<String> addOrder(@RequestBody Order order){
         orderService.addOrder(order);
@@ -28,16 +31,21 @@ public class OrderController {
     }
 
     @PostMapping("/add-partner/{partnerId}")
-    public ResponseEntity<String> addPartner(@PathVariable String partnerId){
-       // orderService.addPartner(partnerId);
+    public ResponseEntity<String> addPartner(@PathVariable("partnerId") String partnerID){
+        orderService.addPartner(partnerID);
         return new ResponseEntity<>("New delivery partner added successfully", HttpStatus.CREATED);
     }
 
     @PutMapping("/add-order-partner-pair")
-    public ResponseEntity<String> addOrderPartnerPair(@RequestParam String orderId, @RequestParam String partnerId){
-
+    public ResponseEntity<String> addOrderPartnerPair(@RequestParam("orderId") String orderId, @RequestParam("partnerId") String partnerId){
         //This is basically assigning that order to that partnerId
-        return new ResponseEntity<>("New order-partner pair added successfully", HttpStatus.CREATED);
+
+        boolean ans =orderService.addOrderPartnerPair(orderId,partnerId);
+        if(ans) {
+            System.out.print(orderId + " " + partnerId);
+            return new ResponseEntity<>("New order-partner pair added successfully", HttpStatus.CREATED);
+        }
+        return new ResponseEntity<>("Either Order or Customer Dosent exist",HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/get-order-by-id/{orderId}")
@@ -53,9 +61,9 @@ public class OrderController {
     }
 
     @GetMapping("/get-partner-by-id/{partnerId}")
-    public ResponseEntity<DeliveryPartner> getPartnerById(@PathVariable String partnerId){
+    public ResponseEntity<DeliveryPartner> getPartnerById(@PathVariable("partnerId") String partnerId){
 
-        DeliveryPartner deliveryPartner = null;
+        DeliveryPartner deliveryPartner = orderService.getPartnerById(partnerId);
 
         //deliveryPartner should contain the value given by partnerId
 
@@ -65,7 +73,7 @@ public class OrderController {
     @GetMapping("/get-order-count-by-partner-id/{partnerId}")
     public ResponseEntity<Integer> getOrderCountByPartnerId(@PathVariable String partnerId){
 
-        Integer orderCount = 0;
+        Integer orderCount = orderService.getOrderCountByPartnerId(partnerId);
 
         //orderCount should denote the orders given by a partner-id
 
@@ -73,8 +81,11 @@ public class OrderController {
     }
 
     @GetMapping("/get-orders-by-partner-id/{partnerId}")
-    public ResponseEntity<List<String>> getOrdersByPartnerId(@PathVariable String partnerId){
-        List<String> orders = null;
+    public ResponseEntity<List<String>> getOrdersByPartnerId(@PathVariable("partnerId") String partnerId){
+
+//       orderService.getOrdersByPartnerId(partnerId,assignedOrderstopartner);
+            List<String> orders = orderService.getOrdersByPartnerId(partnerId);
+
 
         //orders should contain a list of orders by PartnerId
 
