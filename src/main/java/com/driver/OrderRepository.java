@@ -63,12 +63,18 @@ public class OrderRepository {
 
     public Integer getCountOfUnassignedOrders() {
         Integer count =0;
-        for(String orders : OrderDb.keySet()){
-            for(String dp : assignedDb.keySet()){
-                if(!assignedDb.get(dp).contains(orders)) count++;
-            }
+//        for(String orders : OrderDb.keySet()){
+//            for(String dp : assignedDb.keySet()){
+//                if(!assignedDb.get(dp).contains(orders)) count++;
+//            }
+//        }
+//        return count;
+        for(String dp : assignedDb.keySet()){
+            List<String> orders = assignedDb.get(dp);
+            for(String order : orders) count++;
         }
-        return count;
+        Integer ans = OrderDb.size()-count;
+        return  ans;
     }
 
     public Integer getOrdersLeftAfterGivenTimeByPartnerId(int timeinMinutes, String partnerId) {
