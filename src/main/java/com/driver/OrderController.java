@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 public class OrderController {
     @Autowired
-    OrderService orderService;
+    OrderService orderService = new OrderService();
 
     //List<String> assignedOrderstopartner = new ArrayList<>();
     @PostMapping("/add-order")
@@ -42,7 +42,7 @@ public class OrderController {
 
         boolean ans =orderService.addOrderPartnerPair(orderId,partnerId);
         if(ans) {
-            System.out.print(orderId + " " + partnerId);
+            //System.out.print(orderId + " " + partnerId);
             return new ResponseEntity<>("New order-partner pair added successfully", HttpStatus.CREATED);
         }
         return new ResponseEntity<>("Either Order or Customer Dosent exist",HttpStatus.NOT_FOUND);
@@ -51,7 +51,7 @@ public class OrderController {
     @GetMapping("/get-order-by-id/{orderId}")
     public ResponseEntity<Order> getOrderById(@PathVariable("orderId") String orderId){
 
-        System.out.print(orderId);
+        //System.out.print(orderId);
         Order order= orderService.getOrderById(orderId);
 
        //if(order ==null) return new ResponseEntity<String>("order", HttpStatus.CREATED);
@@ -71,7 +71,7 @@ public class OrderController {
     }
 
     @GetMapping("/get-order-count-by-partner-id/{partnerId}")
-    public ResponseEntity<Integer> getOrderCountByPartnerId(@PathVariable String partnerId){
+    public ResponseEntity<Integer> getOrderCountByPartnerId(@PathVariable("partnerId") String partnerId){
 
         Integer orderCount = orderService.getOrderCountByPartnerId(partnerId);
 
