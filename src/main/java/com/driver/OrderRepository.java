@@ -1,5 +1,6 @@
 package com.driver;
 
+import io.swagger.models.auth.In;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -51,5 +52,35 @@ public class OrderRepository {
 
     public List<String> getOrdersByPartnerId(String partnerId) {
        return assignedDb.get(partnerId);
+    }
+
+    public List<String> getAllOrders(List<String> orders) {
+        for(String keys : OrderDb.keySet()){
+            orders.add(keys);
+        }
+        return orders;
+    }
+
+    public Integer getCountOfUnassignedOrders() {
+        Integer count =0;
+        for(String orders : OrderDb.keySet()){
+            for(String dp : assignedDb.keySet()){
+                if(!assignedDb.get(dp).contains(orders)) count++;
+            }
+        }
+        return count;
+    }
+
+    public Integer getOrdersLeftAfterGivenTimeByPartnerId(int timeinMinutes, String partnerId) {
+        List<String> orders = assignedDb.get(partnerId);
+        Integer count =0;
+        for(String id : orders){
+            Order o = OrderDb.get(id);
+            if(timeinMinutes < o.getDeliveryTime()){
+                count++;
+            }
+            timeinMinutes-=o.getDeliveryTime();
+        }
+        return count;
     }
 }
