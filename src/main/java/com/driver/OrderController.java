@@ -108,7 +108,7 @@ public class OrderController {
         return new ResponseEntity<>(countOfOrders, HttpStatus.CREATED);
     }
 
-    @GetMapping("/get-count-of-orders-left-after-given-time/{time}/{partnerId}")
+    @GetMapping("/get-count-of-orders-left-after-given-time/{time}/{partnerId}") // need changes
     public ResponseEntity<Integer> getOrdersLeftAfterGivenTimeByPartnerId(@PathVariable("time") String time, @PathVariable("partnerId") String partnerId){
 
         Integer countOfOrders = orderService.getOrdersLeftAfterGivenTimeByPartnerId(time,partnerId);
@@ -118,9 +118,9 @@ public class OrderController {
         return new ResponseEntity<>(countOfOrders, HttpStatus.CREATED);
     }
 
-    @GetMapping("/get-last-delivery-time/{partnerId}")
+    @GetMapping("/get-last-delivery-time/{partnerId}")                                                                   // reviewed
     public ResponseEntity<String> getLastDeliveryTimeByPartnerId(@PathVariable String partnerId){
-        String time = null;
+        String time = orderService.getLastDeliveryTimeByPartnerId(partnerId);
 
         //Return the time when that partnerId will deliver his last delivery order.
 
@@ -128,20 +128,27 @@ public class OrderController {
     }
 
     @DeleteMapping("/delete-partner-by-id/{partnerId}")
-    public ResponseEntity<String> deletePartnerById(@PathVariable String partnerId){
+    public ResponseEntity<String> deletePartnerById(@PathVariable("partnerId") String partnerId){
 
         //Delete the partnerId
         //And push all his assigned orders to unassigned orders.
+        if (orderService.getPartnerById(partnerId) == null) {
+            return new ResponseEntity<>("Partner not found", HttpStatus.NOT_FOUND);
+        }
+        orderService.deletePartnerById(partnerId);
 
         return new ResponseEntity<>(partnerId + " removed successfully", HttpStatus.CREATED);
     }
 
     @DeleteMapping("/delete-order-by-id/{orderId}")
-    public ResponseEntity<String> deleteOrderById(@PathVariable String orderId){
+    public ResponseEntity<String> deleteOrderById(@PathVariable("orderId") String orderId){
 
         //Delete an order and also
         // remove it from the assigned order of that partnerId
-
+        if(orderService.getOrderById(orderId)==null){
+            return  new ResponseEntity<>("No such order found",HttpStatus.NOT_FOUND);
+        }
+        orderService.deleteOrderById(orderId);
         return new ResponseEntity<>(orderId + " removed successfully", HttpStatus.CREATED);
     }
 }

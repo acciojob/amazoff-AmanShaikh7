@@ -89,4 +89,28 @@ public class OrderRepository {
         }
         return count;
     }
+
+    public int getLastDeliveryTimeByPartnerId(String partnerId) {
+        List<String> orders = assignedDb.get(partnerId);
+        int ans = 0;
+        for(String orderid : orders){
+            int time = OrderDb.get(orderid).getDeliveryTime(); // time in minutes
+            ans = Math.max(ans,time);
+        }
+        return ans;
+    }
+
+    public void deletePartnerById(String partnerId) {
+        PartnerDB.remove(partnerId);
+        assignedDb.remove(partnerId);
+    }
+
+    public void deleteOrderById(String orderId) {
+        for(String assigned : assignedDb.keySet()){
+            if(assignedDb.get(assigned).contains(orderId)){
+                assignedDb.get(assigned).remove(orderId);
+            }
+        }
+        OrderDb.remove(orderId);
+    }
 }
