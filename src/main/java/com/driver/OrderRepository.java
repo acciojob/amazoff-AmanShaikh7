@@ -85,7 +85,7 @@ public class OrderRepository {
             if(timeinMinutes < o.getDeliveryTime()){
                 count++;
             }
-            timeinMinutes-=o.getDeliveryTime();
+            //timeinMinutes-=o.getDeliveryTime();
         }
         return count;
     }
